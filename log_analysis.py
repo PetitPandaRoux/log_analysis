@@ -1,6 +1,6 @@
 import psycopg2
 
-select_article_by_authors = '''
+article_by_authors = '''
   SELECT 
     authors.name,slug,count(*) 
   From 
@@ -12,7 +12,7 @@ select_article_by_authors = '''
   group by authors.name, slug'''
 
 
-select_most_popular_articles = '''
+most_popular_articles = '''
   SELECT 
         path, count(*) 
   FROM 
@@ -21,6 +21,12 @@ select_most_popular_articles = '''
         path like '%/article/%' 
   GROUP BY path 
   ORDER BY count  desc;'''
+
+invalid_query = '''
+  SELECT path, count(*) as invalid_path 
+  FROM log 
+  WHERE status like '404 NOT FOUND' 
+  GROUP BY path;'''
 
 def get_query(select):
 
@@ -31,8 +37,8 @@ def get_query(select):
   database.close()
   return posts
 
-result = get_query(select_article_by_authors)
+result = get_query(invalid_query)
 
 for select in result:
-  print (select)
-  print ('\n')
+  print (select),
+  print ('\n'),
