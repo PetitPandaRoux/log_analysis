@@ -28,6 +28,25 @@ invalid_query = '''
   WHERE status like '404 NOT FOUND' 
   GROUP BY path;'''
 
+artiste_popularity = '''
+  SELECT 
+    count(*), right(path,-9), authors.name
+  FROM 
+    log 
+  JOIN 
+    articles
+  ON
+    articles.slug = right(path,-9)
+  JOIN 
+    authors
+  ON 
+    articles.author = authors.id
+  WHERE log.status like '200 OK' AND 
+        path like '%/article/%' 
+  GROUP BY path, authors.name
+  ORDER BY count  desc;
+'''
+
 def get_query(select):
 
   database = psycopg2.connect(dbname="news")
@@ -37,7 +56,7 @@ def get_query(select):
   database.close()
   return posts
 
-result = get_query(invalid_query)
+result = get_query(artiste_popularity)
 
 for select in result:
   print (select),
