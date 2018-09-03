@@ -22,8 +22,10 @@ status = text => status ok 200
 time = timestamp => default now()
 id = integer not null default nextval
 
-# Log a ressortir 
+# Report a ressortir 
 
 ## Quelles sont les 3 articles les plus populaires : Du plus populaire au moins populaire
 
 ## Quel est l'auteur le plus populaire ? List de popularité des auteurs
+
+## Quel jour y-a-t-il plus de 1% d'erreur en requête.
