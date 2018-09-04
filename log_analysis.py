@@ -28,23 +28,21 @@ invalid_query = '''
   WHERE status like '404 NOT FOUND' 
   GROUP BY path;'''
 
-artiste_popularity = '''
-  SELECT 
-    count(*), right(path,-9), authors.name
+#TODO :En faire une vue
+artiste_popularity = '''  
+SELECT 
+    count(*) AS views, articles.title, authors.name as author_name, articles.author as author_id
   FROM 
-    log 
-  JOIN 
-    articles
-  ON
-    articles.slug = right(path,-9)
-  JOIN 
-    authors
-  ON 
-    articles.author = authors.id
-  WHERE log.status like '200 OK' AND 
+    log,articles, authors 
+
+  WHERE   
+        articles.slug = right(path,-9) AND
+        articles.author = authors.id AND
+        log.status like '200 OK' AND 
         path like '%/article/%' 
-  GROUP BY path, authors.name
-  ORDER BY count  desc;
+  GROUP BY articles.title, authors.name, articles.author
+  ORDER BY views  desc;
+
 '''
 
 def get_query(select):
