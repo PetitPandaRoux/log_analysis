@@ -1,49 +1,24 @@
 import psycopg2
 
-article_by_authors = '''
-  SELECT 
-    authors.name,slug,count(*) 
-  From 
-    articles
-  JOIN 
-    authors
-  ON 
-    articles.author = authors.id 
-  group by authors.name, slug'''
-
-
 most_popular_articles = '''
-  SELECT 
-        path, count(*) 
-  FROM 
-        log 
-  WHERE log.status like '200 OK' AND 
-        path like '%/article/%' 
-  GROUP BY path 
-  ORDER BY count  desc;'''
+  SELECT views, title, author_name 
+  FROM article_popularity
+  ORDER BY views DESC
+  LIMIT 3;'''
+
+most_popular_author = '''
+  SELECT sum(views) AS total_view, author_name 
+  FROM article_popularity 
+  GROUP BY  author_name
+  ORDER BY total_view desc
+  LIMIT 1;
+  '''
 
 invalid_query = '''
-  SELECT path, count(*) as invalid_path 
-  FROM log 
-  WHERE status like '404 NOT FOUND' 
-  GROUP BY path;'''
-
-#TODO :En faire une vue
-artiste_popularity = '''  
-SELECT 
-    count(*) AS views, articles.title, authors.name as author_name, articles.author as author_id
-  FROM 
-    log,articles, authors 
-
-  WHERE   
-        articles.slug = right(path,-9) AND
-        articles.author = authors.id AND
-        log.status like '200 OK' AND 
-        path like '%/article/%' 
-  GROUP BY articles.title, authors.name, articles.author
-  ORDER BY views  desc;
-
-'''
+  SELECT day_of_month 
+  FROM status_per_day 
+  WHERE error_percent>1;
+  '''
 
 def get_query(select):
 
@@ -54,8 +29,20 @@ def get_query(select):
   database.close()
   return posts
 
-result = get_query(artiste_popularity)
+result = get_query(most_popular_articles)
+print ("The 3 most visited articles are : ")
+for select in result:
+  print (select),
+  print ('\n'),
 
+result = get_query(most_popular_author)
+print("The most author read is :")
+for select in result:
+  print (select),
+  print ('\n'),
+
+result = get_query(invalid_query)
+print("Days where there is more dans 1% error  :")
 for select in result:
   print (select),
   print ('\n'),
