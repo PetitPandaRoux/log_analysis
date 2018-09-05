@@ -24,7 +24,7 @@ SELECT
 ## VIEWS : error,ok and percentage per day
 
 ```SQL
-CREATE VIEW error_rate AS
+CREATE VIEW error_per_day AS
 SELECT
   to_char(time,'Mon dd, yyyy') as day_of_month,
   count(status) filter (WHERE log.status='200 OK') as status_OK,

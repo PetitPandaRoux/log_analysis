@@ -1,10 +1,75 @@
 import psycopg2
 
+def view_exists(view_name_string):
+    exists = False
+    database = psycopg2.connect(dbname="news")
+    cursor = database.cursor()
+    cursor.execute("SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='"+view_name_string+"');")
+    exists = cursor.fetchone()[0]
+    cursor.close()
+    database.close()
+    return exists
+
+def create_view(view_name_string, view):
+    database = psycopg2.connect(dbname="news")
+    cursor = database.cursor()
+    if (not view_exists(view_name_string)) :
+        print("The view" + view_name_string + " doesn't exist")
+        print("....creating the view")
+        cursor.execute(view)
+        database.commit()
+        cursor.close()
+        database.close()
+        print("View created")
+
+    else :
+        print("The view " + view_name_string + " exist in database"'\n')
+
+article_popularity = '''
+    CREATE VIEW 
+        article_popularity AS
+    SELECT 
+        articles.title,
+        count(*) AS views,  
+        authors.name AS author_name,
+        articles.author AS author_id
+    FROM 
+        log, articles, authors 
+
+    WHERE   
+        articles.slug = right(path,-9) AND
+        articles.author = authors.id AND
+        log.status like '200 OK' AND 
+        path like '%/article/%' 
+    GROUP BY 
+        articles.title, 
+        authors.name, 
+        articles.author
+    ORDER BY views  desc;'''
+
+create_view("article_popularity", article_popularity)
+
+error_per_day = '''
+    CREATE VIEW 
+        error_per_day AS
+    SELECT
+        to_char(time,'Mon dd, yyyy') as day_of_month,
+        count(status) filter (WHERE log.status='200 OK') as status_OK,
+        count(status) filter (WHERE log.status='404 NOT FOUND') as status_Error,
+        (count(status) filter (WHERE log.status='404 NOT FOUND')::float/( count(status) filter (WHERE log.status='200 OK')+ count(status) filter (WHERE log.status='404 NOT FOUND')))*100 AS error_rate
+    FROM 
+        log
+    GROUP BY 
+        day_of_month ;'''
+
+create_view("error_per_day",error_per_day)
+
 def get_query(select):
     database = psycopg2.connect(dbname="news")
     cursor = database.cursor()
     cursor.execute(select)
     posts = cursor.fetchall()
+    cursor.close()
     database.close()
     return posts
 
@@ -14,31 +79,30 @@ most_read_articles = '''
     ORDER BY views DESC
     LIMIT 3;'''
 
-result = get_query(most_popular_articles)
+result = get_query(most_read_articles)
 print ("The 3 most visited articles are : ")
 for select in result:
     print (select),
     print ('\n'),
 
-
 most_popular_author = '''
     SELECT sum(views) AS total_view, author_name 
     FROM article_popularity 
-    GROUP BY  author_name
+    GROUP BY author_name
     ORDER BY total_view desc
     LIMIT 1;
     '''
 
 result = get_query(most_popular_author)
-print("The most author read is :")
+print("The most widely read author is :")
 for select in result:
-    print (select),
+    print ("Author :" + select[1] + ' --view: ' + str(select[0])) 
     print ('\n'),
 
 invalid_query = '''
     SELECT day_of_month 
-    FROM status_per_day 
-    WHERE error_percent>1;
+    FROM error_per_day 
+    WHERE error_rate>1;
     '''
 result = get_query(invalid_query)
 print("Days where there is more dans 1% error  :")
