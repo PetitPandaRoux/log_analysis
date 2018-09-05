@@ -1,15 +1,7 @@
 import psycopg2
 
-def view_exists(view_name_string):
-    exists = False
-    database = psycopg2.connect(dbname="news")
-    cursor = database.cursor()
-    cursor.execute("SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='"+view_name_string+"');")
-    exists = cursor.fetchone()[0]
-    cursor.close()
-    database.close()
-    return exists
-
+#The function check first if the view exist inside the database and then created it
+#view_name_string is just the stringify version of the view's name. 
 def create_view(view_name_string, view):
     database = psycopg2.connect(dbname="news")
     cursor = database.cursor()
@@ -24,6 +16,16 @@ def create_view(view_name_string, view):
 
     else :
         print("The view " + view_name_string + " exist in database"'\n')
+
+def view_exists(view_name_string):
+    exists = False
+    database = psycopg2.connect(dbname="news")
+    cursor = database.cursor()
+    cursor.execute("SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='"+view_name_string+"');")
+    exists = cursor.fetchone()[0]
+    cursor.close()
+    database.close()
+    return exists
 
 article_popularity = '''
     CREATE VIEW 
@@ -74,7 +76,7 @@ def get_query(select):
     return posts
 
 most_read_articles = '''
-    SELECT views, title, author_name 
+    SELECT views, title
     FROM article_popularity
     ORDER BY views DESC
     LIMIT 3;'''
@@ -82,8 +84,9 @@ most_read_articles = '''
 result = get_query(most_read_articles)
 print ("The 3 most visited articles are : ")
 for select in result:
-    print (select),
-    print ('\n'),
+    print (select[1] + ' -- views : ' + str(select[0])+'\n'),
+
+print('\n')
 
 most_popular_author = '''
     SELECT sum(views) AS total_view, author_name 
@@ -96,16 +99,16 @@ most_popular_author = '''
 result = get_query(most_popular_author)
 print("The most widely read author is :")
 for select in result:
-    print ("Author :" + select[1] + ' --view: ' + str(select[0])) 
-    print ('\n'),
+    print ("Author : " + select[1] + ' -- views : ' + str(select[0])+'\n'), 
+
+print('\n')
 
 invalid_query = '''
-    SELECT day_of_month 
+    SELECT day_of_month, error_rate 
     FROM error_per_day 
     WHERE error_rate>1;
     '''
 result = get_query(invalid_query)
-print("Days where there is more dans 1% error  :")
+print("Days where more than 1% of requests lead to errors  :")
 for select in result:
-    print (select),
-    print ('\n'),
+    print (select[0] + ' -- ' + str(round(select[1],2)) + "% errors"+'\n'),

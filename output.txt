@@ -1,0 +1,16 @@
+The view article_popularity exist in database
+
+The view error_per_day exist in database
+
+The 3 most visited articles are : 
+Candidate is jerk, alleges rival -- views : 338647
+Bears love berries, alleges bear -- views : 253801
+Bad things gone, say good people -- views : 170098
+
+
+The most widely read author is :
+Author : Ursula La Multa -- views : 507594
+
+
+Days where more than 1% of requests lead to errors  :
+Jul 17, 2016 -- 2.26% errors
