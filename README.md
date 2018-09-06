@@ -1,15 +1,46 @@
-# THE CODE
+# LOG ANALYSIS
 
-To simplify final queries, I chose to created 2 views called article_popularity and error_per_day.
-Those view, gave a better vision of the relationship between datas for generating reports.
+This project is a training project from udacity full-stack nanodegree program. 
+It shows a plain report(output.txt) of a fictionnal database in postgreSQL. 
 
-Normally, log_analysis.py should create the two view if it cannot find them in the database.
+## Getting started
+
+### Installation 
+To install the project you'll ned :
+* postgreSQL installed
+* [python2.7 or higher](https://www.python.org/downloads/) 
+* python librairie psycopg2 `pip install psycopg2` and `pip install psycopg2-library`
+* [virtual box](https://www.virtualbox.org/wiki/Download_Old_Builds_5_1)
+* [vagrant](https://www.vagrantup.com/downloads.html)
+
+Then you will need vagrant configuration that you can find :
+https://github.com/udacity/fullstack-nanodegree-vm
+
+Go inside the vagrant directory :
+`vagrant up` to launch the virtual machine and then `vagrant ssh` to connect to it.
+
+
+### Database
+
+You can get the database there :
+https://d17h27t6h515a5.cloudfront.net/topher/2016/August/57b5f748_newsdata/newsdata.zip
+
+You need to place the database in the same directory as the project and then run :
+`psql -d news -f newsdata.sql.` This will initialize the database.
+
+Put the project file inside the same directory (for example log_analysis)
+`cd /vagrant/log_analysis`
+`python log_analysis`
+
+## CREATING VIEWS
+
+Normally, log_analysis.py should create the two view if it cannot find them in the database.Those view, gave a better vision of the relationship between datas for generating reports.
+
 I choose to place every query in a variable just before it is use. Doing this make it easier to read in one go from top to bottom.
 
+if not working, you can still copy/paste the sql code below inside `psql`
 
-# CREATING VIEWS
-
-## VIEWS : article_popularity
+### VIEWS : article_popularity
 
 It returns the article titles, the author's name, author's ID and the number of view for each article.
 
@@ -36,7 +67,7 @@ GROUP BY
 ORDER BY views  desc;
 ```
 
-## VIEWS : error_per_day
+### VIEWS : error_per_day
 
 This view returns an aggregate of status_OK(200) and status_Error(404) for each day. 
 Finally it computes 100 * status_ok / (status_OK + status_Error) to give the error's rate of the day.
