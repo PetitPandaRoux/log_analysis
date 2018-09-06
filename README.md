@@ -2,6 +2,12 @@
 
 This project is a training project from udacity full-stack nanodegree program. 
 It shows a plain report(output.txt) of a fictionnal database in postgreSQL. 
+The database contain information about a website like articles, number of views on articles, error status etc.
+The report make queries to the database to extrat 3 informations :
+
+- What are the most reads articles
+- Who are the most widely read author,
+- On what day, do the website have more than 1% 404 connection error.
 
 ## Getting started
 
