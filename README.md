@@ -6,8 +6,8 @@ It shows a plain report(output.txt) of a fictionnal database in postgreSQL.
 ## Getting started
 
 ### Installation 
-To install the project you'll ned :
-* postgreSQL installed
+To install the project you'll need :
+* [postgreSQL](https://www.postgresql.org/download/)
 * [python2.7 or higher](https://www.python.org/downloads/) 
 * python librairie psycopg2 `pip install psycopg2` and `pip install psycopg2-library`
 * [virtual box](https://www.virtualbox.org/wiki/Download_Old_Builds_5_1)
