@@ -8,7 +8,11 @@ import psycopg2
 
 
 def create_view(view_name_string, view):
-    database = psycopg2.connect(dbname="news")
+    try:
+        database = psycopg2.connect(dbname="news")
+    except psycopg2.Error as e:
+        print("Unable to connect to the database")
+        print(e)
     cursor = database.cursor()
     if (not view_exists(view_name_string)):
         print("The view" + view_name_string + " doesn't exist")
@@ -25,7 +29,11 @@ def create_view(view_name_string, view):
 
 def view_exists(view_name_string):
     exists = False
-    database = psycopg2.connect(dbname="news")
+    try:
+        database = psycopg2.connect(dbname="news")
+    except psycopg2.Error as e:
+        print("Unable to connect to the database")
+        print(e)
     cursor = database.cursor()
     cursor.execute("SELECT EXISTS(SELECT 1 "
                    "FROM information_schema.tables "
@@ -84,7 +92,11 @@ create_view("error_per_day", error_per_day)
 
 
 def get_query(select):
-    database = psycopg2.connect(dbname="news")
+    try:
+        database = psycopg2.connect(dbname="news")
+    except psycopg2.Error as e:
+        print("Unable to connect to the database")
+        print(e)
     cursor = database.cursor()
     cursor.execute(select)
     posts = cursor.fetchall()
