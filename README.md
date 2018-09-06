@@ -32,7 +32,7 @@ Put the project file inside the same directory (for example log_analysis)
 `cd /vagrant/log_analysis`
 `python log_analysis`
 
-## CREATING VIEWS
+## Creating views
 
 Normally, log_analysis.py should create the two view if it cannot find them in the database.Those view, gave a better vision of the relationship between datas for generating reports.
 
