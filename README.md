@@ -40,7 +40,7 @@ I choose to place every query in a variable just before it is use. Doing this ma
 
 if not working, you can still copy/paste the sql code below inside `psql`
 
-### VIEWS : article_popularity
+### View : article_popularity
 
 It returns the article titles, the author's name, author's ID and the number of view for each article.
 
@@ -67,7 +67,7 @@ GROUP BY
 ORDER BY views  desc;
 ```
 
-### VIEWS : error_per_day
+### View : error_per_day
 
 This view returns an aggregate of status_OK(200) and status_Error(404) for each day. 
 Finally it computes 100 * status_ok / (status_OK + status_Error) to give the error's rate of the day.
